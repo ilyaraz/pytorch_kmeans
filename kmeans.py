@@ -55,10 +55,10 @@ def update_centers(dataset, codes, num_centers):
     centers = torch.zeros(num_centers, dimension, dtype=torch.float, device=device_gpu)
     cnt = torch.zeros(num_centers, dtype=torch.float, device=device_gpu)
     centers.scatter_add_(0, codes.view(-1, 1).expand(-1, dimension), dataset)
-    cnt.scatter_add_(0, codes, torch.ones(num_points, dtype=torch.float, device=device_gpu)) # I would guess we can avoid the allocation here <--nope
+    cnt.scatter_add_(0, codes, torch.ones(num_points, dtype=torch.float, device=device_gpu))
     # Avoiding division by zero
     # Not necessary if there are no duplicates among the data points
-    cnt = torch.where(cnt > 0.5, cnt, torch.ones(num_centers, dtype=torch.float, device=device_gpu)) # And here
+    cnt = torch.where(cnt > 0.5, cnt, torch.ones(num_centers, dtype=torch.float, device=device_gpu))
     centers /= cnt.view(-1, 1)
     return centers
 
