@@ -8,8 +8,8 @@ device_cpu = torch.device('cpu')
 
 # Choosing `num_centers` random data points as the initial centers
 def random_init(dataset, num_centers):
-    num_points = dataset.size()[0]
-    dimension = dataset.size()[1]
+    num_points = dataset.size(0)
+    dimension = dataset.size(1)
     used = torch.zeros(num_points, dtype=torch.long)
     indices = torch.zeros(num_centers, dtype=torch.long)
     for i in range(num_centers):
@@ -26,9 +26,9 @@ def random_init(dataset, num_centers):
 
 # Compute for each data point the closest center
 def compute_codes(dataset, centers):
-    num_points = dataset.size()[0]
-    dimension = dataset.size()[1]
-    num_centers = centers.size()[0]
+    num_points = dataset.size(0)
+    dimension = dataset.size(1)
+    num_centers = centers.size(0)
     # 5e8 should vary depending on the free memory on the GPU
     # Ideally, automatically ;)
     chunk_size = int(5e8 / num_centers)
@@ -50,8 +50,8 @@ def compute_codes(dataset, centers):
 
 # Compute new centers as means of the data points forming the clusters
 def update_centers(dataset, codes, num_centers):
-    num_points = dataset.size()[0]
-    dimension = dataset.size()[1]
+    num_points = dataset.size(0)
+    dimension = dataset.size(1)
     centers = torch.zeros(num_centers, dimension, dtype=torch.float, device=device_gpu)
     cnt = torch.zeros(num_centers, dtype=torch.float, device=device_gpu)
     centers.scatter_add_(0, codes.view(-1, 1).expand(-1, dimension), dataset)
